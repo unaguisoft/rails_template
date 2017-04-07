@@ -109,8 +109,48 @@ end
 # ---------------------------------------
 # Layout
 # ---------------------------------------
-insert_into_file 'app/views/layouts/application.html.erb',
-  "\n<%= render 'layouts/header' %>\n <%= render 'layouts/messages'%>", :after => /<body>/
+remove_file 'app/views/layouts/application.html.erb'
+create_file 'app/views/layous/application.html.erb' do <<-TEXT
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>CHANGE TITLE IN application.html</title>
+      <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+      <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+      <%= csrf_meta_tags %>
+    </head>
+    <body class="<%= "#{controller_name} #{action_name}" %>">
+
+      <div class="wrapper">
+        <%= render 'application/navbar' %>
+
+        <%= render 'application/aside' %>
+
+        <article class="content-wrapper">
+          <div class="content">
+            <%= yield %>
+          </div>
+          <section id="snackbar-container">
+            <%= flash_messages if flash %>
+          </section>
+        </article>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="js-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+
+          </div>
+        </div>
+      </div>
+
+      <%= yield(:modals) %>
+
+    </body>
+    </html>
+  TEXT
+end
 # ---------------------------------------
 
 
