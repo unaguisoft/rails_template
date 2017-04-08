@@ -66,6 +66,8 @@ end
 gem_group :production do
   gem 'rack-cache', require: 'rack/cache'
 end
+
+run 'bundle install'
 # ---------------------------------------
 
 
