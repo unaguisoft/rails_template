@@ -15,7 +15,7 @@ end
 
 # ---------------------------------------
 # ---------------------------------------
-# Remove Gemfile and start one from zero
+# GEMFILE
 # ---------------------------------------
 remove_file "Gemfile"
 run "touch Gemfile"
@@ -69,11 +69,41 @@ end
 # ---------------------------------------
 
 
+# ---------------------------------------
+# Directories
+# ---------------------------------------
+run "mkdir app/filters"
+run "mkdir app/services"
+run "mkdir app/decorators"
+run "mkdir app/presenters"
+# ---------------------------------------
+
+
 
 # ---------------------------------------
-# Remove README
+# VENDOR
 # ---------------------------------------
-remove_file 'README.rdoc'
+inside 'vendor' do
+  directory 'assets' # Copy the entire assets folder
+  inside 'assets' do
+    inside 'javascripts' do
+      run "ln -s ../plugins/ plugins" # Build symbolic links
+    end
+    inside 'stylesheets' do
+      run "ln -s ../plugins/ plugins" # Build symbolic links.
+    end
+  end
+end
+# ---------------------------------------
+
+
+
+# ---------------------------------------
+# APP-ASSETS
+# ---------------------------------------
+inside 'app' do
+  directory 'assets' # Copy the entire assets folder
+end
 # ---------------------------------------
 
 
@@ -81,10 +111,19 @@ remove_file 'README.rdoc'
 # ---------------------------------------
 # Sorcery
 # ---------------------------------------
-if yes? "Would you like to install Sorcery?"
-  generate "controller User index new edit create update destroy"
-  generate "sorcery:install remember_me reset_password"
-  say "Sorcery ya fue instalado. Recuerda configurar sus submódulos"
+generate "sorcery:install remember_me reset_password"
+rails_command("db:migrate")
+generate "controller UserSessions new create destroy"
+generate "controller User index new edit create update destroy"
+# ---------------------------------------
+
+
+
+# ---------------------------------------
+# ROUTEs
+# ---------------------------------------
+inside 'config' do
+  copy_file 'routes.rb'
 end
 # ---------------------------------------
 
@@ -95,69 +134,51 @@ end
 # ---------------------------------------
 generate(:controller, "main")
 route "root 'main#home'"
-remove_file 'app/views/main/home.html.erb'
-create_file 'app/views/main/home.html.erb' do <<-TEXT
-	<div class="center">
-	<h1>Welcome, Whoop Whoop!</h1>
-	<h4><%= link_to 'Sign Up', new_user_registration_path %></h4>
-	</div>
-	TEXT
+# ---------------------------------------
+
+
+# ---------------------------------------
+# VIEWS / LAYOUT
+# ---------------------------------------
+after_bundle do
+  remove_dir 'app/views'
+  inside 'app' do
+    inside 'views' do
+      directory 'application'
+      directory 'layouts'
+      directory 'user_sessions'
+      directory 'users'
+    end
+  end
 end
 # ---------------------------------------
 
 
+
 # ---------------------------------------
-# Layout
+# GITIGNORE
 # ---------------------------------------
-remove_file 'app/views/layouts/application.html.erb'
-create_file 'app/views/layous/application.html.erb' do <<-TEXT
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>CHANGE TITLE IN application.html</title>
-      <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-      <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-      <%= csrf_meta_tags %>
-    </head>
-    <body class="<%= "#{controller_name} #{action_name}" %>">
+remove_file ".gitignore"
+copy_file ".gitignore"
 
-      <div class="wrapper">
-        <%= render 'application/navbar' %>
 
-        <%= render 'application/aside' %>
 
-        <article class="content-wrapper">
-          <div class="content">
-            <%= yield %>
-          </div>
-          <section id="snackbar-container">
-            <%= flash_messages if flash %>
-          </section>
-        </article>
-      </div>
 
-      <!-- Modal -->
-      <div class="modal fade" id="js-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-
-          </div>
-        </div>
-      </div>
-
-      <%= yield(:modals) %>
-
-    </body>
-    </html>
-  TEXT
-end
 # ---------------------------------------
+# README
+# ---------------------------------------
+remove_file 'README.rdoc'
+# ---------------------------------------
+
 
 
 # ---------------------------------------
 # Git
 # ---------------------------------------
-git :init
-git add: '.'
-git commit: "-a -m 'Initial commit'"
+after_bundle do
+  git :init
+  git flow: 'init -d'
+  git add: '.'
+  git commit: "-a -m 'Initial commit'"
+end
 # ---------------------------------------

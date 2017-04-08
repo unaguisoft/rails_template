@@ -1,0 +1,39 @@
+<header class="main-header">
+
+  <!-- Logo -->
+  <%= link_to root_path, class: 'logo' do %>
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b>A</b></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><b>A name</b></span>
+  <% end %>
+
+  <nav class="navbar navbar-static-top navbar-danger" role="navigation">
+
+    <!-- Sidebar toggle button-->
+    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+      <span class="sr-only">Hide/Show menú</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <% if content_for? :title %>
+        <h3> <%= content_for(:title) %> </h3>
+      <% end %>
+    </a>
+
+    <% if logged_in? %>
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <li>
+            <%= link_to '#', title: '#' do %>
+              <%= icon 'file-text-o' %> +
+            <% end %>
+          </li>
+          <%= render 'application/navbar_user_profile' %>
+        </ul>
+      </div>
+    <% end %>
+  </nav>
+
+</header>
+

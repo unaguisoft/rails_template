@@ -1,0 +1,18 @@
+<%= form_for @user, url: update_profile_path do |f| %>
+  <fieldset class="form-group">
+    <%= f.label :email %><br>
+    <%= f.text_field :email, class: 'form-control', readonly: true %>
+  </fieldset>
+  <fieldset class="form-group">
+    <%= f.label :password %><br>
+    <%= f.text_field :password, class: 'form-control', placeholder: 'Enter your password' %>
+  </fieldset>
+  <fieldset class="form-group">
+    <%= f.label :password_confirmation %><br>
+    <%= f.text_field :password_confirmation, class: 'form-control', placeholder: 'Re-enter password' %>
+  </fieldset>
+  <div class="actions">
+    <%= link_to t(:back), root_path, class: 'btn btn-default', data: {'disable-with' => 'Wait...'} %>
+    <%= f.submit t(:submit), class: 'btn btn-primary', data: {'disable-with' => 'Wait...'} %>
+  </div>
+<% end %>
