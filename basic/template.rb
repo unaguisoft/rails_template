@@ -44,26 +44,26 @@ gem 'platform-api' # Heroku
 gem 'sidekiq'
 gem 'sidekiq-status'
 
-group :development, :test do
+gem_group :development, :test do
   gem 'pry' # Debugging
   gem "letter_opener"
   gem 'byebug'
 end
 
-group :development do
+gem_group :development do
   gem 'web-console', '~> 3.0'
   gem 'spring'
   gem 'annotate', '~> 2.7', '>= 2.7.1' # Muestra campos de la BD en los modelos
   gem 'hirb', '~> 0.7.3'
 end
 
-group :test do
+gem_group :test do
   gem 'minitest-reporters'
   gem 'database_cleaner'
   gem 'rails-controller-testing'
 end
 
-group :production do
+gem_group :production do
   gem 'rack-cache', require: 'rack/cache'
 end
 # ---------------------------------------
