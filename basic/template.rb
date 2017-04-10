@@ -1,3 +1,4 @@
+require 'bundler'
 #Add the current directoy to the path Thor uses to look up files
 #(check Thor notes)
 
@@ -17,11 +18,11 @@ end
 # ---------------------------------------
 # GEMFILE
 # ---------------------------------------
-remove_file "Gemfile"
-run "touch Gemfile"
+remove_file 'Gemfile'
+run 'touch Gemfile'
 #be sure to add source at the top of the file
 add_source 'https://rubygems.org'
-gem 'rails', '~> 5.0', '>= 5.0.1'
+gem 'rails', '~> 5.0.0'
 gem 'puma'
 gem 'pg', '~> 0.15'
 gem 'sass-rails', '~> 5.0'
@@ -35,22 +36,21 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'draper', '~> 3.0.0.pre1' # Decorators
 gem 'kaminari', '~> 0.17.0' # Paginator
 gem 'bootstrap-sass', '~> 3.3.6'
-gem "font-awesome-rails"
+gem 'font-awesome-rails'
 gem 'momentjs-rails', '>= 2.9.0' # Datetimepicker dependency
 gem 'bootstrap3-datetimepicker-rails', '~> 4.17.37' # Datetimepicker
 gem 'sorcery', '~> 0.9.1'
-gem "non-stupid-digest-assets"
+gem 'non-stupid-digest-assets'
 gem 'platform-api' # Heroku
-gem 'sidekiq'
-gem 'sidekiq-status'
 
 gem_group :development, :test do
   gem 'pry' # Debugging
-  gem "letter_opener"
+  gem 'letter_opener'
   gem 'byebug'
 end
 
 gem_group :development do
+  gem 'listen', '~> 3.1', '>= 3.1.5'
   gem 'web-console', '~> 3.0'
   gem 'spring'
   gem 'annotate', '~> 2.7', '>= 2.7.1' # Muestra campos de la BD en los modelos
@@ -67,9 +67,9 @@ gem_group :production do
   gem 'rack-cache', require: 'rack/cache'
 end
 
-run 'rbenv local 2.3.0'
 run 'bundle install'
 # ---------------------------------------
+
 
 
 # ---------------------------------------
@@ -112,22 +112,8 @@ end
 # ---------------------------------------
 
 
-
 # ---------------------------------------
-# Sorcery
-# ---------------------------------------
-after_bundle do
-  generate "sorcery:install remember_me reset_password"
-  rails_command("db:migrate")
-  generate "controller UserSessions new create destroy"
-  generate "controller User index new edit create update destroy"
-end
-# ---------------------------------------
-
-
-
-# ---------------------------------------
-# ROUTEs
+# ROUTES
 # ---------------------------------------
 remove_file 'config/routes.rb'
 inside 'config' do
@@ -136,13 +122,34 @@ end
 # ---------------------------------------
 
 
-
 # ---------------------------------------
 # Generate MainController
 # ---------------------------------------
-generate(:controller, "main")
-route "root 'main#home'"
+if yes?("Generate MainController?")
+  generate(:controller, "main")
+  route "root 'main#home'"
+end
 # ---------------------------------------
+
+
+# ---------------------------------------
+# CLEAN APP DIR
+# ---------------------------------------
+remove_dir 'app/channels'
+remove_dir 'app/jobs'
+
+
+# ---------------------------------------
+# Sorcery
+# ---------------------------------------
+if yes?("Install Sorcery?")
+  generate "sorcery:install remember_me reset_password"
+  rails_command("db:create db:migrate")
+  generate(:controller, "user_sessions new create destroy")
+  # generate "controller User index new edit create update destroy"
+end
+# ---------------------------------------
+
 
 
 # ---------------------------------------
@@ -162,21 +169,14 @@ end
 
 
 # ---------------------------------------
-# README
-# ---------------------------------------
-remove_file 'README.rdoc'
-# ---------------------------------------
-
-
-
-# ---------------------------------------
-# Git
+# Git, GitFlow, Readme
 # ---------------------------------------
 after_bundle do
+  remove_file 'README.rdoc'
   git :init
   git flow: 'init -d'
-  remove_file '.gitignore'
-  copy_file ".gitignore"
+  # remove_file '.gitignore'
+  # copy_file ".gitignore"
   git add: '.'
   git commit: "-a -m 'Initial commit'"
 end
