@@ -112,6 +112,8 @@ end
 # ---------------------------------------
 
 
+
+
 # ---------------------------------------
 # ROUTES
 # ---------------------------------------
@@ -125,9 +127,15 @@ end
 # ---------------------------------------
 # Generate MainController
 # ---------------------------------------
-if yes?("Generate MainController?")
-  generate(:controller, "main")
+if yes?("Generate MainController? [Yes/No]")
+  generate(:controller, "main", "home")
   route "root 'main#home'"
+  remove_dir 'app/views/main'
+  inside 'app' do 
+    inside 'views' do
+      directory 'main'
+    end
+  end
 end
 # ---------------------------------------
 
@@ -142,11 +150,22 @@ remove_dir 'app/jobs'
 # ---------------------------------------
 # Sorcery
 # ---------------------------------------
-if yes?("Install Sorcery?")
+if yes?("Install Sorcery? [Yes/No]")
   generate "sorcery:install remember_me reset_password"
-  rails_command("db:create db:migrate")
+  rails_command("db:drop db:create db:migrate")
   generate(:controller, "user_sessions new create destroy")
-  # generate "controller User index new edit create update destroy"
+  generate "controller User index new edit create update destroy"
+end
+# ---------------------------------------
+
+
+
+# ---------------------------------------
+# APP-HELPERS
+# ---------------------------------------
+remove_dir 'app/helpers'
+inside 'app' do
+  directory 'helpers' # Copy the entire helpers folder
 end
 # ---------------------------------------
 

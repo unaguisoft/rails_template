@@ -1,4 +1,4 @@
-<%= content_tag :title, @app_name.humanize %>
+<%= content_tag :title, (@name.try(:humanize) || "Change me in _head.html")  %>
 <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
 <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
 <%= favicon_link_tag %>
