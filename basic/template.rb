@@ -67,6 +67,7 @@ gem_group :production do
   gem 'rack-cache', require: 'rack/cache'
 end
 
+run 'rbenv local 2.3.0'
 run 'bundle install'
 # ---------------------------------------
 
@@ -103,6 +104,7 @@ end
 # ---------------------------------------
 # APP-ASSETS
 # ---------------------------------------
+remove_dir 'app/assets'
 inside 'app' do
   directory 'assets' # Copy the entire assets folder
 end
@@ -113,10 +115,12 @@ end
 # ---------------------------------------
 # Sorcery
 # ---------------------------------------
-generate "sorcery:install remember_me reset_password"
-rails_command("db:migrate")
-generate "controller UserSessions new create destroy"
-generate "controller User index new edit create update destroy"
+after_bundle do
+  generate "sorcery:install remember_me reset_password"
+  rails_command("db:migrate")
+  generate "controller UserSessions new create destroy"
+  generate "controller User index new edit create update destroy"
+end
 # ---------------------------------------
 
 
@@ -124,6 +128,7 @@ generate "controller User index new edit create update destroy"
 # ---------------------------------------
 # ROUTEs
 # ---------------------------------------
+remove_file 'config/routes.rb'
 inside 'config' do
   copy_file 'routes.rb'
 end
@@ -142,27 +147,16 @@ route "root 'main#home'"
 # ---------------------------------------
 # VIEWS / LAYOUT
 # ---------------------------------------
-after_bundle do
-  remove_dir 'app/views'
-  inside 'app' do
-    inside 'views' do
-      directory 'application'
-      directory 'layouts'
-      directory 'user_sessions'
-      directory 'users'
-    end
+remove_dir 'app/views'
+inside 'app' do
+  inside 'views' do
+    directory 'application'
+    directory 'layouts'
+    directory 'user_sessions'
+    directory 'users'
   end
 end
 # ---------------------------------------
-
-
-
-# ---------------------------------------
-# GITIGNORE
-# ---------------------------------------
-remove_file ".gitignore"
-copy_file ".gitignore"
-
 
 
 
@@ -180,6 +174,8 @@ remove_file 'README.rdoc'
 after_bundle do
   git :init
   git flow: 'init -d'
+  remove_file '.gitignore'
+  copy_file ".gitignore"
   git add: '.'
   git commit: "-a -m 'Initial commit'"
 end
