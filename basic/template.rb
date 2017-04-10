@@ -21,7 +21,7 @@ remove_file "Gemfile"
 run "touch Gemfile"
 #be sure to add source at the top of the file
 add_source 'https://rubygems.org'
-gem 'rails', '>= 5.0.0', '< 5.1'
+gem 'rails', '~> 5.0', '>= 5.0.1'
 gem 'puma'
 gem 'pg', '~> 0.15'
 gem 'sass-rails', '~> 5.0'
@@ -86,6 +86,7 @@ run "mkdir app/presenters"
 # ---------------------------------------
 # VENDOR
 # ---------------------------------------
+remove_dir 'vendor/assets'
 inside 'vendor' do
   directory 'assets' # Copy the entire assets folder
   inside 'assets' do
