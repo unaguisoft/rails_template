@@ -98,7 +98,7 @@ App.init = ->
   $("a, span, i, div, td, h5").tooltip()
 
   # Select2
-  $("select").normalSelect()
+  $("normal-select2").normalSelect()
 
   $('.sidebar li.active').closest('.treeview').addClass('active')
 
@@ -109,7 +109,7 @@ $(document).on "turbolinks:request-end", ->
   App.initSnackbar()
   App.initModals()
   App.initDatepicker()
-  $("select").normalSelect()
+  $("normal-select2").normalSelect()
 
 $(document).on 'flash:send', (e, flashMessages) ->
   App.flash_snackbar_render flashMessages

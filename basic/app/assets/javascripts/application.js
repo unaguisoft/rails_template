@@ -16,7 +16,7 @@
 //= require turbolinks
 //= require bootstrap-sprockets
 //= require plugins/snackbars/snackbar
-//= require plugins/select2/select2.min
+//= require plugins/select2/select2.full.min
 //= require select2_initializer
 //= require moment
 //= require bootstrap-datetimepicker

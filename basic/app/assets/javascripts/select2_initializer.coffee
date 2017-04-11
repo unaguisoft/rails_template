@@ -1,5 +1,6 @@
 jQuery.fn.ajaxSelect = (options) ->
   url = $(this).data('url')
+  $select = $(this)
 
   defaults =
     placeholder: "Search..."
@@ -23,26 +24,23 @@ jQuery.fn.ajaxSelect = (options) ->
     format_extra: (record) ->
       return "<small class='select2-extra-text'> #{record.extra} </small>"
 
-    selectData: (term, page)->
-      query: term
+    selectData: (params)->
+      query: params.term
       limit: 10
-      page: page
+      page: params.page
 
   settings = $.extend(defaults, options)
 
+  $option = $("<option selected>#{$(this).data('record-text')}</option>").val($(this).data('record-id'))
+  $select.append($option).trigger('change')
+
   this.select2
-    initSelection: (elm, callback) ->
-      data =
-        id: $(elm).data "record-id"
-        name: $(elm).data "record-text"
-      callback(data)
     placeholder: settings.placeholder
     allowClear: settings.allow_clear
-    minimumInputLength: 3
+    minimumInputLength: 2
     ajax:
       url: url
-      dataType: "jsonp"
-      quietMillis: 100
+      delay: 250
       data: (term, page) ->
         settings.selectData(term, page)
       results: (data, page) ->
@@ -55,6 +53,7 @@ jQuery.fn.ajaxSelect = (options) ->
     createSearchChoice: settings.createSearchChoice
     createSearchChoicePosition: settings.createSearchChoicePosition
     createSearchChoice: settings.createSearchChoice
+
 
 
 jQuery.fn.normalSelect = (options) ->
