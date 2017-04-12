@@ -136,17 +136,6 @@ end
 
 
 # ---------------------------------------
-# ROUTES
-# ---------------------------------------
-remove_file 'config/routes.rb'
-inside 'config' do
-  copy_file 'routes.rb'
-end
-# ---------------------------------------
-
-
-
-# ---------------------------------------
 # Sorcery
 # ---------------------------------------
 if yes?("Install Sorcery? [Yes/No]")
@@ -162,6 +151,11 @@ if yes?("Install Sorcery? [Yes/No]")
       directory 'user_sessions'
       directory 'users'
     end
+  end
+  
+  remove_file 'config/routes.rb'
+  inside 'config' do
+    copy_file 'routes.rb'
   end
   
   inside 'config' do
@@ -202,8 +196,6 @@ after_bundle do
   remove_file 'README.rdoc'
   git :init
   git flow: 'init -d'
-  remove_file '.gitignore'
-  copy_file ".gitignore"
   git add: '.'
   git commit: "-a -m 'Initial commit'"
 end
