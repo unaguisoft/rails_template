@@ -141,10 +141,10 @@ end
 if yes?("Install Sorcery? [Yes/No]")
   generate "sorcery:install reset_password"
   rails_command("db:drop db:create db:migrate")
-  generate "controller UserSession new create destroy"
-  generate "controller User index new edit create update destroy"
+  generate "controller UserSessions new create destroy"
+  generate "controller Users index new edit create update destroy"
   
-  remove_dir 'app/views/user_sesions'
+  remove_dir 'app/views/user_sessions'
   remove_dir 'app/views/users'
   inside 'app' do
     inside 'views' do
@@ -177,8 +177,8 @@ end
 if yes?("Generate MainController? [Yes/No]")
   generate(:controller, "main", "home")
   route "root 'main#home'"
-  remove_dir 'app/views/main'
   
+  remove_dir 'app/views/main'
   inside 'app' do 
     inside 'views' do
       directory 'main'
