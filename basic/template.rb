@@ -71,18 +71,6 @@ run 'bundle install'
 # ---------------------------------------
 
 
-
-# ---------------------------------------
-# Directories
-# ---------------------------------------
-run "mkdir app/filters"
-run "mkdir app/services"
-run "mkdir app/decorators"
-run "mkdir app/presenters"
-# ---------------------------------------
-
-
-
 # ---------------------------------------
 # VENDOR
 # ---------------------------------------
@@ -113,59 +101,21 @@ end
 
 
 
-
 # ---------------------------------------
-# ROUTES
+# APP
 # ---------------------------------------
-remove_file 'config/routes.rb'
-inside 'config' do
-  copy_file 'routes.rb'
-end
-# ---------------------------------------
-
-
-# ---------------------------------------
-# Generate MainController
-# ---------------------------------------
-if yes?("Generate MainController? [Yes/No]")
-  generate(:controller, "main", "home")
-  route "root 'main#home'"
-  remove_dir 'app/views/main'
-  inside 'app' do 
-    inside 'views' do
-      directory 'main'
-    end
-  end
-end
-# ---------------------------------------
-
-
-# ---------------------------------------
-# CLEAN APP DIR
-# ---------------------------------------
+run "mkdir app/filters"
+run "mkdir app/services"
+run "mkdir app/decorators"
+run "mkdir app/presenters"
 remove_dir 'app/channels'
 remove_dir 'app/jobs'
-
-
-# ---------------------------------------
-# Sorcery
-# ---------------------------------------
-if yes?("Install Sorcery? [Yes/No]")
-  generate "sorcery:install remember_me reset_password"
-  rails_command("db:drop db:create db:migrate")
-  generate(:controller, "user_sessions new create destroy")
-  generate "controller User index new edit create update destroy"
-end
-# ---------------------------------------
-
-
-
-# ---------------------------------------
-# APP-HELPERS
-# ---------------------------------------
 remove_dir 'app/helpers'
+remove_dir 'app/mailers'
+
 inside 'app' do
   directory 'helpers' # Copy the entire helpers folder
+  directory 'mailers'
 end
 # ---------------------------------------
 
@@ -179,8 +129,66 @@ inside 'app' do
   inside 'views' do
     directory 'application'
     directory 'layouts'
-    directory 'user_sessions'
-    directory 'users'
+  end
+end
+# ---------------------------------------
+
+
+
+# ---------------------------------------
+# ROUTES
+# ---------------------------------------
+remove_file 'config/routes.rb'
+inside 'config' do
+  copy_file 'routes.rb'
+end
+# ---------------------------------------
+
+
+
+# ---------------------------------------
+# Sorcery
+# ---------------------------------------
+if yes?("Install Sorcery? [Yes/No]")
+  generate "sorcery:install reset_password"
+  rails_command("db:drop db:create db:migrate")
+  generate "controller UserSession new create destroy"
+  generate "controller User index new edit create update destroy"
+  
+  remove_dir 'app/views/user_sesions'
+  remove_dir 'app/views/users'
+  inside 'app' do
+    inside 'views' do
+      directory 'user_sessions'
+      directory 'users'
+    end
+  end
+  
+  inside 'config' do
+    inside 'routes' do
+      route "resources :user_sessions, only: [:new, :create, :destroy]"
+      route "resources :users"
+      route "get 'login', to: 'user_sessions#new', as: :login"
+      route "post 'logout', to: 'user_sessions#destroy', as: :logout"
+    end
+  end
+end
+# ---------------------------------------
+
+
+
+# ---------------------------------------
+# Generate MainController
+# ---------------------------------------
+if yes?("Generate MainController? [Yes/No]")
+  generate(:controller, "main", "home")
+  route "root 'main#home'"
+  remove_dir 'app/views/main'
+  
+  inside 'app' do 
+    inside 'views' do
+      directory 'main'
+    end
   end
 end
 # ---------------------------------------
@@ -194,8 +202,8 @@ after_bundle do
   remove_file 'README.rdoc'
   git :init
   git flow: 'init -d'
-  # remove_file '.gitignore'
-  # copy_file ".gitignore"
+  remove_file '.gitignore'
+  copy_file ".gitignore"
   git add: '.'
   git commit: "-a -m 'Initial commit'"
 end
